@@ -17,12 +17,14 @@
   "description": "",
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.10.0",
     "dayjs": "^1.11.21",
     "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.21.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

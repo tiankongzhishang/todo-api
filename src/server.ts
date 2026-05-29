@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express'
 import { PrismaClient } from '../generated/prisma/client.js'
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
+import { PrismaPg } from '@prisma/adapter-pg'
+import pg from 'pg'
 import dayjs from 'dayjs'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
@@ -14,10 +15,9 @@ function formatTodo<T extends { createdAt: Date; updatedAt: Date }>(todo: T) {
 }
 
 const app = express()
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL })
 const prisma = new PrismaClient({
-  adapter: new PrismaBetterSqlite3({
-    url: 'file:dev.db',
-  }),
+  adapter: new PrismaPg(pool),
 })
 
 app.use(express.json())
