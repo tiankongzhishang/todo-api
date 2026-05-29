@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express'
-import { PrismaClient } from './generated/prisma/client.js'
+import { PrismaClient } from '../generated/prisma/client.js'
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 import dayjs from 'dayjs'
 import bcrypt from 'bcryptjs'
