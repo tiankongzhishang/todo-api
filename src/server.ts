@@ -4,24 +4,7 @@ import dayjs from 'dayjs'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-function createPrismaClient() {
-  const databaseUrl = process.env.DATABASE_URL || ''
-
-  if (databaseUrl.startsWith('file:')) {
-    // 本地开发 — SQLite
-    const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
-    return new PrismaClient({
-      adapter: new PrismaBetterSqlite3({
-        url: databaseUrl,
-      }),
-    })
-  }
-
-  // 生产环境 — PostgreSQL，不需要 adapter
-  return new PrismaClient()
-}
-
-const prisma = createPrismaClient()
+const prisma = new PrismaClient()
 
 function formatTodo<T extends { createdAt: Date; updatedAt: Date }>(todo: T) {
   return {
