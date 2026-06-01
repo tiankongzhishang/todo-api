@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const prisma_1 = require("../generated/prisma");
 const adapter_pg_1 = require("@prisma/adapter-pg");
+const pg_1 = __importDefault(require("pg"));
 const dayjs_1 = __importDefault(require("dayjs"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -14,6 +15,10 @@ const adapter = new adapter_pg_1.PrismaPg({
     ssl: { rejectUnauthorized: false }
 });
 const prisma = new prisma_1.PrismaClient({ adapter });
+const dbPool = new pg_1.default.Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+});
 function formatTodo(todo) {
     return {
         ...todo,
@@ -76,6 +81,15 @@ app.post('/api/login', async (req, res) => {
     res.json({ message: '登录成功', token });
 });
 // ============ 路由 ============
+app.get('/health', async (req, res) => {
+    try {
+        const result = await dbPool.query('SELECT NOW() as time');
+        res.json({ status: 'ok', db: result.rows[0], env_db: process.env.DATABASE_URL?.substring(0, 30) + '...' });
+    }
+    catch (err) {
+        res.json({ status: 'error', message: err.message, code: err.code, env_db: process.env.DATABASE_URL?.substring(0, 30) + '...' });
+    }
+});
 app.get('/', (req, res) => {
     res.json({ message: 'TODO API (Prisma版) 💾' });
 });

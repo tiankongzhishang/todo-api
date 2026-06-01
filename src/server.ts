@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express'
 import { PrismaClient } from '../generated/prisma'
 import { PrismaPg } from '@prisma/adapter-pg'
+import pg from 'pg'
 import dayjs from 'dayjs'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
@@ -10,6 +11,11 @@ const adapter = new PrismaPg({
   ssl: { rejectUnauthorized: false }
 })
 const prisma = new PrismaClient({ adapter })
+
+const dbPool = new pg.Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+})
 
 function formatTodo<T extends { createdAt: Date; updatedAt: Date }>(todo: T) {
   return {
@@ -83,6 +89,15 @@ app.post('/api/login', async (req: Request, res: Response) => {
 })
 
 // ============ 路由 ============
+app.get('/health', async (req: Request, res: Response) => {
+  try {
+    const result = await dbPool.query('SELECT NOW() as time')
+    res.json({ status: 'ok', db: result.rows[0], env_db: process.env.DATABASE_URL?.substring(0, 30) + '...' })
+  } catch (err: any) {
+    res.json({ status: 'error', message: err.message, code: err.code, env_db: process.env.DATABASE_URL?.substring(0, 30) + '...' })
+  }
+})
+
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'TODO API (Prisma版) 💾' })
 })
