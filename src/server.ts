@@ -1,10 +1,27 @@
 import express, { Request, Response, NextFunction } from 'express'
-import { PrismaClient } from '../generated/prisma/client.js'
-import { PrismaPg } from '@prisma/adapter-pg'
-import pg from 'pg'
+import { PrismaClient } from './generated/prisma/client.js'
 import dayjs from 'dayjs'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+
+function createPrismaClient() {
+  const databaseUrl = process.env.DATABASE_URL || ''
+
+  if (databaseUrl.startsWith('file:')) {
+    // 本地开发 — SQLite
+    const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
+    return new PrismaClient({
+      adapter: new PrismaBetterSqlite3({
+        url: databaseUrl,
+      }),
+    })
+  }
+
+  // 生产环境 — PostgreSQL，不需要 adapter
+  return new PrismaClient()
+}
+
+const prisma = createPrismaClient()
 
 function formatTodo<T extends { createdAt: Date; updatedAt: Date }>(todo: T) {
   return {
@@ -15,10 +32,10 @@ function formatTodo<T extends { createdAt: Date; updatedAt: Date }>(todo: T) {
 }
 
 const app = express()
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL })
-const prisma = new PrismaClient({
-  adapter: new PrismaPg(pool),
-})
+// const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL })
+// const prisma = new PrismaClient({
+//   adapter: new PrismaPg(pool),
+// })
 
 app.use(express.json())
 

@@ -5,10 +5,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const client_js_1 = require("./generated/prisma/client.js");
-const adapter_better_sqlite3_1 = require("@prisma/adapter-better-sqlite3");
 const dayjs_1 = __importDefault(require("dayjs"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+function createPrismaClient() {
+    const databaseUrl = process.env.DATABASE_URL || '';
+    if (databaseUrl.startsWith('file:')) {
+        // 本地开发 — SQLite
+        const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3');
+        return new client_js_1.PrismaClient({
+            adapter: new PrismaBetterSqlite3({
+                url: databaseUrl,
+            }),
+        });
+    }
+    // 生产环境 — PostgreSQL，不需要 adapter
+    return new client_js_1.PrismaClient();
+}
+const prisma = createPrismaClient();
 function formatTodo(todo) {
     return {
         ...todo,
@@ -17,11 +31,10 @@ function formatTodo(todo) {
     };
 }
 const app = (0, express_1.default)();
-const prisma = new client_js_1.PrismaClient({
-    adapter: new adapter_better_sqlite3_1.PrismaBetterSqlite3({
-        url: 'file:dev.db',
-    }),
-});
+// const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL })
+// const prisma = new PrismaClient({
+//   adapter: new PrismaPg(pool),
+// })
 app.use(express_1.default.json());
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret-key'; // 在生产环境中请使用更安全的方式管理密钥
 function authMiddleware(req, res, next) {
