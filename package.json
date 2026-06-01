@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx src/server.ts",
-    "build": "prisma generate && tsc",
+    "build": "prisma generate && tsc && cp -r generated dist/",
     "start": "node dist/server.js",
     "postinstall": "prisma generate",
     "db:push": "prisma db push",

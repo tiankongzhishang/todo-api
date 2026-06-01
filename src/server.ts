@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../generated/prisma'
 import { PrismaPg } from '@prisma/adapter-pg'
 import dayjs from 'dayjs'
 import bcrypt from 'bcryptjs'
