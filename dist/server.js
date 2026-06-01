@@ -4,25 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const client_js_1 = require("./generated/prisma/client.js");
+const prisma_1 = require("./generated/prisma");
 const dayjs_1 = __importDefault(require("dayjs"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-function createPrismaClient() {
-    const databaseUrl = process.env.DATABASE_URL || '';
-    if (databaseUrl.startsWith('file:')) {
-        // 本地开发 — SQLite
-        const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3');
-        return new client_js_1.PrismaClient({
-            adapter: new PrismaBetterSqlite3({
-                url: databaseUrl,
-            }),
-        });
-    }
-    // 生产环境 — PostgreSQL，不需要 adapter
-    return new client_js_1.PrismaClient();
-}
-const prisma = createPrismaClient();
+const prisma = new prisma_1.PrismaClient();
 function formatTodo(todo) {
     return {
         ...todo,

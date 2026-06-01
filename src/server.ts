@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express'
-import { PrismaClient } from './generated/prisma/client.js'
+import { PrismaClient } from './generated/prisma'
 import dayjs from 'dayjs'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
