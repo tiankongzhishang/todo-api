@@ -5,10 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const client_1 = require("@prisma/client");
+const adapter_pg_1 = require("@prisma/adapter-pg");
 const dayjs_1 = __importDefault(require("dayjs"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const prisma = new client_1.PrismaClient();
+const adapter = new adapter_pg_1.PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new client_1.PrismaClient({ adapter });
 function formatTodo(todo) {
     return {
         ...todo,
@@ -17,10 +19,6 @@ function formatTodo(todo) {
     };
 }
 const app = (0, express_1.default)();
-// const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL })
-// const prisma = new PrismaClient({
-//   adapter: new PrismaPg(pool),
-// })
 app.use(express_1.default.json());
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret-key'; // 在生产环境中请使用更安全的方式管理密钥
 function authMiddleware(req, res, next) {

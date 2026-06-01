@@ -1,10 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express'
 import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
 import dayjs from 'dayjs'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-const prisma = new PrismaClient()
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
+const prisma = new PrismaClient({ adapter })
 
 function formatTodo<T extends { createdAt: Date; updatedAt: Date }>(todo: T) {
   return {
@@ -15,10 +17,7 @@ function formatTodo<T extends { createdAt: Date; updatedAt: Date }>(todo: T) {
 }
 
 const app = express()
-// const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL })
-// const prisma = new PrismaClient({
-//   adapter: new PrismaPg(pool),
-// })
+
 
 app.use(express.json())
 
