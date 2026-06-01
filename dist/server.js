@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const prisma_1 = require("./generated/prisma");
+const client_1 = require("@prisma/client");
 const dayjs_1 = __importDefault(require("dayjs"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const prisma = new prisma_1.PrismaClient();
+const prisma = new client_1.PrismaClient();
 function formatTodo(todo) {
     return {
         ...todo,
