@@ -5,7 +5,10 @@ import dayjs from 'dayjs'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
+const adapter = new PrismaPg({ 
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+})
 const prisma = new PrismaClient({ adapter })
 
 function formatTodo<T extends { createdAt: Date; updatedAt: Date }>(todo: T) {
