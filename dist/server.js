@@ -40,11 +40,11 @@ app.post('/api/register', async (req, res) => {
     if (!username || !password) {
         return res.status(400).json({ error: '用户名和密码不能为空' });
     }
-    const existingUser = await prisma.user.findUnique({ where: { username } });
-    if (existingUser) {
-        return res.status(400).json({ error: '用户名已存在' });
-    }
     try {
+        const existingUser = await prisma.user.findUnique({ where: { username } });
+        if (existingUser) {
+            return res.status(400).json({ error: '用户名已存在' });
+        }
         const hashedPassword = await bcryptjs_1.default.hash(password, 10);
         const user = await prisma.user.create({
             data: { username, password: hashedPassword },
@@ -52,7 +52,8 @@ app.post('/api/register', async (req, res) => {
         res.status(201).json({ message: '注册成功', userId: user.id });
     }
     catch (error) {
-        res.status(500).json({ error: '服务器错误' });
+        console.error('REGISTER ERROR:', error);
+        res.status(500).json({ error: '服务器错误', detail: error?.message, code: error?.code });
     }
 });
 app.post('/api/login', async (req, res) => {
